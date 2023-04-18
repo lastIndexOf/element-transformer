@@ -1,13 +1,8 @@
-enum Message {
-  Display = "display",
-}
-
-// interface MessageData {
-//   [Message.Display]: {};
-// }
+import { Message } from "./types";
+import { throttle } from "./utils/throttle";
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  console.log("Receive from popup", msg);
+  console.log("Receive from Background", msg);
   const { type, data } = msg;
 
   switch (type) {
@@ -26,8 +21,12 @@ const handleDisplay = (data: any) => {
   else window.removeEventListener("mousemove", handleMouseMove);
 };
 
-const handleMouseMove = (e: MouseEvent) => {
-  console.info(e.target);
-};
+const handleMouseMove = throttle((e: MouseEvent) => {
+  // console.info(e.target);
+  // getComputedStyle
+  if (e.target) {
+    (e.target as any).style.boxShadow = "0 0 0 2px #fa3140";
+  }
+}, 100);
 
 console.info("Extension Init");
