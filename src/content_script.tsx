@@ -1,9 +1,33 @@
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-  if (msg.color) {
-    console.log("Receive color = " + msg.color);
-    document.body.style.backgroundColor = msg.color;
-    sendResponse("Change color to " + msg.color);
-  } else {
-    sendResponse("Color message is none.");
+enum Message {
+  Display = "display",
+}
+
+// interface MessageData {
+//   [Message.Display]: {};
+// }
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  console.log("Receive from popup", msg);
+  const { type, data } = msg;
+
+  switch (type) {
+    case Message.Display:
+      handleDisplay(data);
+    default:
+      break;
   }
 });
+
+// !TODO Type Details
+const handleDisplay = (data: any) => {
+  const { value } = data;
+
+  if (value) window.addEventListener("mousemove", handleMouseMove);
+  else window.removeEventListener("mousemove", handleMouseMove);
+};
+
+const handleMouseMove = (e: MouseEvent) => {
+  console.info(e.target);
+};
+
+console.info("Extension Init");
